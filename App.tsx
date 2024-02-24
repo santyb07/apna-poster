@@ -5,9 +5,10 @@
  * @format
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import type {PropsWithChildren} from 'react';
 import {
+  Alert,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -16,103 +17,52 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import { Provider } from 'react-redux'
+import { PersistGate } from 'redux-persist/integration/react';
+import AppNavigation from './src/navigation/AppNavigation';
+import FlashMessage from 'react-native-flash-message';
+import { persistor, store } from './src/redux/store/store';
+import CheckInternet from './src/screens/CheckInternet';
+import messaging from '@react-native-firebase/messaging';
+import { getToken, notificationListner, requestUserPermission } from './src/utils/firebase/CommonUtils';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
 
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+  const [isConnected, setIsConnected] = useState<Boolean>(true);
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      const title= JSON.stringify(remoteMessage.notification?.title)
+      const body= JSON.stringify(remoteMessage.notification?.body)
+      Alert.alert('A new FCM message arrived!',title+body );
+    });
 
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    requestUserPermission()
+    notificationListner()
+    getToken()
+  }, []);
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
+    <SafeAreaView className='flex-1 bg-white'>
+       <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        {
+        isConnected===true ?
+      <AppNavigation/>:null
+        }
+         <CheckInternet
+       isConnected={isConnected}
+       setIsConnected={setIsConnected}
+     />
+      <FlashMessage position="top" /> 
+      </PersistGate>
+    </Provider>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
-  },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
-  },
-});
 
 export default App;

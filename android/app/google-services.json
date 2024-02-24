@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "674389039446",
+    "project_id": "apna-poster-a427e",
+    "storage_bucket": "apna-poster-a427e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:674389039446:android:2d983f70e606b9fffd1ef7",
+        "android_client_info": {
+          "package_name": "com.apna_poster"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh_fhaw5kOYMf1oD5Y5M9Az5FaK8JDLAs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
