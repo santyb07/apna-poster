@@ -1,5 +1,4 @@
 import { configureStore } from '@reduxjs/toolkit'
-import OnboardReducer from '../features/onboardSlice'
 import authReducer from '../features/authSlice'
 import businessReducer from '../features/businessDetailsSlice'
 
@@ -7,7 +6,6 @@ import { combineReducers } from '@reduxjs/toolkit'
 import persistReducer from 'redux-persist/es/persistReducer'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { persistStore } from 'redux-persist'
-// import persistStore from 'redux-persist/es/persistStore';
 
 
 let persistConfing={
@@ -16,7 +14,6 @@ let persistConfing={
 }
 
 let rootReducer = combineReducers({
-  onboarding: OnboardReducer,
   auth: authReducer,
   businessDetails:businessReducer
 })

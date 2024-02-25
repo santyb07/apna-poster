@@ -10,15 +10,13 @@ import HeaderBar from '../components/HeaderBar'
 import { useRoute } from '@react-navigation/native'
 import { Button, Input } from '@rneui/themed'
 import Auth, { FirebaseAuthTypes } from "@react-native-firebase/auth"
-// import firestore from "@react-native-firebase/firestore"
-// import { getToken } from '../utils/firebase/CommonUtils'
-// import { RootState } from '../redux/store/store'
 import * as yup from 'yup';
 import { Formik, FormikProps } from 'formik';
 import { colors } from '../../utils/constant'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../../redux/store/store'
 import { loginUser } from '../../redux/features/authSlice'
+import firestore from "@react-native-firebase/firestore"
 
 const validationSchema = yup.object().shape({
   otp: yup.string().matches(/^\d+$/, 'Invalid otp').min(6, 'OTP Must be at least 6 digits').max(6,'OTP Must be 6 digits').required('OTP is required'),
@@ -44,10 +42,6 @@ const VerifyOtp = ({navigation}:VerifyOtpProps) => {
   const backToLogin=()=>{
     navigation.pop(1);
   }
-
-  // const handleSubmit=async(values:any)=>{
-  //   console.log(values)
-  // }
   const handleSubmit =async(values: any) => {
     try{
       setLoading(true)
@@ -60,7 +54,17 @@ const VerifyOtp = ({navigation}:VerifyOtpProps) => {
         titleStyle:{fontFamily:'Montserrat-Bold',textAlign:"center",color:'#FFFFFF'},
         // backgroundColor:"#000000"
       });
-      dispatch(loginUser({mobileNumber,userId:response?.user.uid}))
+
+      //check if it is old user and redirect to home page after successfull auth
+      const documentRef = await  (firestore() as any).collection('users').doc(response?.user.uid);
+      await documentRef.get()
+      .then((docSnapshot:any) => {
+        if (docSnapshot.exists) {
+          dispatch(loginUser({mobileNumber,userId:response?.user.uid,isUploadedDetails:true}))
+        }else{
+          dispatch(loginUser({mobileNumber,userId:response?.user.uid,isUploadedDetails:false}))
+        }
+        })
       setLoading(false)
       // console.warn(Auth().currentUser?.uid);
     }catch(err){
@@ -74,7 +78,7 @@ const VerifyOtp = ({navigation}:VerifyOtpProps) => {
   }
   useEffect(() => {
     const subscriber = Auth().onAuthStateChanged(onAuthStateChanged);
-    return subscriber; // unsubscribe on unmount
+    // return subscriber; // unsubscribe on unmount
   }, []);
 
   useEffect(() => {

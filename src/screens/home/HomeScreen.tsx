@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+  Button,
   SafeAreaView,
   ScrollView,
   StatusBar,
@@ -7,13 +8,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import FontAwesomeIcons from 'react-native-vector-icons/FontAwesome';
 import {useDispatch, useSelector} from 'react-redux';
-import firestore from "@react-native-firebase/firestore"
 import { RootState } from '../../redux/store/store';
-import { getToken } from '../../utils/firebase/CommonUtils';
+import Auth from "@react-native-firebase/auth"
+import { useTranslation } from 'react-i18next';
+import firestore from "@react-native-firebase/firestore"
 import { addBusinessDetails } from '../../redux/features/businessDetailsSlice';
-// import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth"
 
 interface HomeScreenProps {
   // navigation: StackNavigationProp<RootStackParamList,"Home">,
@@ -21,33 +21,20 @@ interface HomeScreenProps {
 
 const HomeScreen = (props: HomeScreenProps) => {
   const userData = useSelector((state:RootState)=>state.auth)
+  const {t,i18n} = useTranslation();
   const dispatch = useDispatch();
 
-  // console.warn(auth().currentUser?.uid)
-
   useEffect(()=>{
-
-    const getBusinessData=async ()=>{
-      const fcmtoken= getToken();
-      
+    const getBusinessData=async ()=>{      
       const documentRef = await  (firestore() as any).collection('users').doc(userData.userId);
       await documentRef.get()
       .then((docSnapshot:any) => {
         if (docSnapshot.exists) {
           const data = docSnapshot._data;
       console.log('Document already exists',data);
-
-      //store fcmtoken
-      firestore()
-      .collection('tokens')
-      .doc(userData.userId)
-      .update({token:fcmtoken})
-      .then(() => {
-        console.log('Token added');
-      })
-
+      i18n.changeLanguage(data.language);
       dispatch(addBusinessDetails({
-        businessName:data.businessName,
+        businessName:data.name,
         email:data.email,
         location:data.location,
         logo:data.logo,
@@ -57,49 +44,43 @@ const HomeScreen = (props: HomeScreenProps) => {
         designation:data.designation,
         logoMetadata:data.logoMetadata,
         accountType:data.accountType,
+        language:data.language
       }))
-    } else {
-      // Document doesn't exist, save the data
-      documentRef.set({
-        createdAt: firestore.FieldValue.serverTimestamp(),
-        mobileNumber1:userData.mobileNumber
-      })
-        .then(() => {
-          firestore()
-          .collection('tokens')
-          .doc(userData.userId)
-          .set({token:fcmtoken})
-          .then(() => {
-            console.log('Token added');
-          })
-
-          console.log('Document saved successfully');
-          dispatch(addBusinessDetails({
-            businessName:"",
-            email:"",
-            location:"",
-            logo:"https://res.cloudinary.com/drxhgcqvw/image/upload/v1705428150/ysxh4cpuke6va2sqhou8.png",
-            mobileNumber1:userData.mobileNumber,
-            mobileNumber2:"",
-            website:"",
-            designation:""
-          }))
-        })
-        
-        .catch((error:any )=> {
-          console.log('Error saving document:', error);
-        });
     }
   }) .catch((error:any) => {
     console.log('Error checking document:', error);
   });
 }
-      getBusinessData();
+     getBusinessData();
   },[])
+ 
+  const getCurrentUser=async()=>{
+    const user = Auth().currentUser;
+    console.log(user);
+  }
+  const logoutUser=async()=>{
+    const logout= Auth().signOut();
+    console.log(logout)
+  }
+
+  const changeLanguage=()=>{
+    i18n.changeLanguage('mr') 
+  }
+  const changeLanguageHi=()=>{
+    i18n.changeLanguage('hi') 
+  }
   return (
+    <SafeAreaView className='flex-1'>
     <View>
-      <Text>HomeScreen</Text>
+      <Text>{t('greet')}</Text>
+      <Button title='getCurrentUser' onPress={getCurrentUser}/>
+      <Button title='logoutUser' onPress={logoutUser}/>
+
+      <Button title='change Marathi' onPress={changeLanguage}/>
+      <Button title='change Hindi' onPress={changeLanguageHi}/>
+
     </View>
+    </SafeAreaView>
   )
 }
 

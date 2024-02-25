@@ -14,6 +14,7 @@ export interface businessDetailsProps{
         designation : string | null,
         logoMetadata:string | undefined,
         accountType:string | null,
+        language:string | null,
 }
 
 const initialState: businessDetailsProps= {
@@ -28,6 +29,7 @@ const initialState: businessDetailsProps= {
     designation :null,
     logoMetadata:undefined,
     accountType:null,
+    language:null,
 
 }
 
@@ -35,6 +37,9 @@ export const businessDetailsSlice = createSlice({
   name: 'business',
   initialState,
   reducers: {
+    addBusinessName:(state,action)=>{
+      state.businessName= action.payload
+    },
     addBusinessDetails:(state,action)=>{
         state.businessName =action.payload.businessName;
         state.email =action.payload.email;
@@ -44,6 +49,7 @@ export const businessDetailsSlice = createSlice({
         state.location =action.payload.location;
         state.designation= action.payload.designation ? action.payload.designation :null;
         state.accountType = action.payload.accountType ?action.payload.accountType:null;
+        state.language= action.payload.language
         if(action.payload.logoMetadata){
           state.logoMetadata= action.payload.logoMetadata
           state.logo= action.payload.logo
@@ -59,6 +65,7 @@ export const businessDetailsSlice = createSlice({
         state.logoMetadata = undefined;
         state.logo= undefined;
         state.accountType= null;
+        state.language= null
         // console.warn('user loggedin');
     },
     updateLogo:(state,action)=>{
@@ -86,6 +93,6 @@ export const businessDetailsSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const {addBusinessDetails, clearBusinessDetails, selectFrame,updateLogo} = businessDetailsSlice.actions
+export const {addBusinessDetails, clearBusinessDetails, selectFrame,updateLogo,addBusinessName} = businessDetailsSlice.actions
 
 export default businessDetailsSlice.reducer

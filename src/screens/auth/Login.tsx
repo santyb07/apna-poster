@@ -1,24 +1,17 @@
 import { StackNavigationProp } from '@react-navigation/stack'
-import React,{ useEffect, useRef, useState} from 'react'
-import {Dimensions, KeyboardAvoidingView, StatusBar, ViewStyle, Platform, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import React,{useState} from 'react'
+import { KeyboardAvoidingView, StatusBar, Text, TextInput, View } from 'react-native'
 import { RootStackParamList } from '../../navigation/AppNavigation'
 import LottieView from 'lottie-react-native'
 import CheckBox from '@react-native-community/checkbox';
 import { LogBox } from 'react-native';
-// import HeaderBar from './components/HeaderBar'
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth"
 import { showMessage } from 'react-native-flash-message'
 import { Button } from '@rneui/themed'
-// import { useDispatch } from 'react-redux'
-// import { setConfirmData } from '../redux/features/authSlice'
 import { colors } from '../../utils/constant'
 import HeaderBar from '../components/HeaderBar'
 import { useDispatch } from 'react-redux'
 import { setConfirmData } from '../../redux/features/authSlice'
-// import { AuthContext } from '../context/AuthContext'
-// import { styled } from 'nativewind'
-// import { SafeAreaView } from 'react-native-safe-area-context'
-// const {width, height} = Dimensions.get('window');
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -32,7 +25,6 @@ interface LoginScreenProps{
 const Login = ({navigation}:LoginScreenProps) => {
   const [number,setChangeNumber]= useState<string>("");
   const [toggleCheckBox, setToggleCheckBox] = useState<boolean>(true)
-  // const [confirmData,setConfirmData] = useState<FirebaseAuthTypes.ConfirmationResult | null>(null);
   const [loading,setLoading] = useState<boolean>(false)
   const dispatch = useDispatch();
 
@@ -45,10 +37,6 @@ const Login = ({navigation}:LoginScreenProps) => {
     // console.warn(number)
 }
 
-// const handleLogin =()=>{
-//     console.log('handle login called',number)
-//     navigation.navigate('VerifyOtp',{mobileNumber:number});
-// }
   const handleLogin=async()=>{
     try{
       setLoading(true);
@@ -87,12 +75,13 @@ const Login = ({navigation}:LoginScreenProps) => {
     </View>
       
     <View className='w-full px-4 justify-center  flex-grow'>
-      <View className='flex gap-2 pb-5'>
+      <View className='flex space-y-2'>
       <Text className="text-2xl font-['Montserrat-Bold']">Login</Text>
       <Text className="text-sm  font-['Montserrat-Medium']">Enter your phone number to proceed</Text>
       </View>
       <View className='flex-col'>
       <Text className="my-2 text-black font-semibold text-sm font-['Montserrat-Medium'] pl-10">Mobile Number</Text>
+      <KeyboardAvoidingView>
       <View className='flex-row justify-center items-center gap-2'>
         <Text className="font-['Montserrat-Medium'] text-lg">+91</Text>
       <TextInput
@@ -107,6 +96,7 @@ const Login = ({navigation}:LoginScreenProps) => {
         keyboardType='numeric'
         />
         </View>
+        </KeyboardAvoidingView>
         <View className='flex-row justify-center items-center py-3 gap-2 '>
           <CheckBox
           disabled={false}
