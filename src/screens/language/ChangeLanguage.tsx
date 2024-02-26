@@ -22,90 +22,17 @@ const lang=[
 interface LanguageProps{
     navigation: StackNavigationProp<RootStackParamList,'Language'>,
   }
-const Language = ({navigation}:LanguageProps) => {
+const ChangeLanguage = ({navigation}:LanguageProps) => {
     const [language, setLanguage]= useState('');
-    const userData = useSelector((state:RootState)=>state.auth)
     const dispatch = useDispatch();
     const {t,i18n} = useTranslation();
-
-    useEffect(()=>{
-        const getBusinessData=async ()=>{
-          const fcmtoken= getToken();
-          
-          const documentRef = await  (firestore() as any).collection('users').doc(userData.userId);
-          await documentRef.get()
-          .then((docSnapshot:any) => {
-            if (docSnapshot.exists) {
-              const data = docSnapshot._data;
-          console.log('Document already exists',data);
-    
-          //store fcmtoken
-          firestore()
-          .collection('tokens')
-          .doc(userData.userId)
-          .update({token:fcmtoken})
-          .then(() => {
-            console.log('Token added');
-          })
-    
-          dispatch(addProfileDetails({
-            name:data.name,
-            email:data.email,
-            location:data.location,
-            logo:data.logo,
-            mobileNumber1:data.mobileNumber1,
-            mobileNumber2:data.mobileNumber2,
-            website:data.website,
-            designation:data.designation,
-            logoMetadata:data.logoMetadata,
-            accountType:data.accountType,
-            language:data.language,
-          }))
-        } else {
-          // Document doesn't exist, save the data
-          documentRef.set({
-            createdAt: firestore.FieldValue.serverTimestamp(),
-            mobileNumber1:userData.mobileNumber
-          })
-            .then(() => {
-              firestore()
-              .collection('tokens')
-              .doc(userData.userId)
-              .set({token:fcmtoken})
-              .then(() => {
-                console.log('Token added');
-              })
-    
-              console.log('Document saved successfully');
-              dispatch(addProfileDetails({
-                name:"",
-                email:"",
-                location:"",
-                logo:"https://res.cloudinary.com/drxhgcqvw/image/upload/v1705428150/ysxh4cpuke6va2sqhou8.png",
-                mobileNumber1:userData.mobileNumber,
-                mobileNumber2:"",
-                website:"",
-                designation:""
-              }))
-            })
-            
-            .catch((error:any )=> {
-              console.log('Error saving document:', error);
-            });
-        }
-      }) .catch((error:any) => {
-        console.log('Error checking document:', error);
-      });
-    }
-          getBusinessData();
-      },[])
 
     const handleLang=(val:string)=>{
         setLanguage(val);
         dispatch(setLanguageState(val))
         i18n.changeLanguage(val);
         dispatch(setLanguageState(val));
-        navigation.navigate('UploadProfile');
+        navigation.goBack();
     }
   return (
     <SafeAreaView className='flex-1'>
@@ -132,4 +59,4 @@ const Language = ({navigation}:LanguageProps) => {
   )
 }
 
-export default Language
+export default ChangeLanguage

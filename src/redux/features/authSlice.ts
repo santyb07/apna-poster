@@ -1,7 +1,7 @@
 import { createSlice,createAsyncThunk } from '@reduxjs/toolkit'
-import type { Action, PayloadAction } from '@reduxjs/toolkit'
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import {PURGE} from "redux-persist"
+
 export interface OnboardState {
     userLoggedIn: boolean | null,
     mobileNumber: number | null,
@@ -47,7 +47,8 @@ export const authSlice = createSlice({
     logoutUser:(state)=>{
         state.userLoggedIn = false;
         state.mobileNumber =null;
-        state.userId = '';
+        state.userId = undefined;
+        state.isUploadedDetails= false;
         // console.warn('user loggedin');
     },
   },

@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from '../features/authSlice'
-import businessReducer from '../features/businessDetailsSlice'
+import profileReducer from '../features/profileDetailsSlice'
 
 import { combineReducers } from '@reduxjs/toolkit'
 import persistReducer from 'redux-persist/es/persistReducer'
@@ -15,7 +15,7 @@ let persistConfing={
 
 let rootReducer = combineReducers({
   auth: authReducer,
-  businessDetails:businessReducer
+  profileDetails:profileReducer
 })
 
  

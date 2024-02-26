@@ -13,7 +13,7 @@ import FontAwesomeIcon5 from "react-native-vector-icons/FontAwesome5"
 import storage from '@react-native-firebase/storage';
 import firestore from "@react-native-firebase/firestore"
 import { RootState } from '../../redux/store/store';
-import { addBusinessName, updateLogo } from '../../redux/features/businessDetailsSlice';
+import { addProfileDetails, updateLogo } from '../../redux/features/profileDetailsSlice';
 import { showMessage } from 'react-native-flash-message';
 import auth from '@react-native-firebase/auth';
 
@@ -95,7 +95,7 @@ const UploadProfile = ({navigation}:UploadProfileProp) => {
             accountType:accountType,
             language:userData.language
           }
-          dispatch(addBusinessName(details))
+          dispatch(addProfileDetails(details))
           const res = await firestore()
         .collection('users')
         .doc(userData.userId)

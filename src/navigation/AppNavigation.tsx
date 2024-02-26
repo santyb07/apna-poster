@@ -11,7 +11,13 @@ export type RootStackParamList={
   Home:undefined,
   Language:undefined,
   UploadProfile:undefined,
+  Profile:undefined,
+  EditProfile:undefined,
+  ChangeLanguage:undefined,
+
+  Settings:undefined,
   Onboarding:undefined,
+
   Login:undefined,
   VerifyOtp:{
     mobileNumber:string,

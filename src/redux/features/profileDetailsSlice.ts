@@ -3,60 +3,75 @@ import type { Action, PayloadAction } from '@reduxjs/toolkit'
 import AsyncStorage from "@react-native-async-storage/async-storage"
 import {PURGE} from "redux-persist"
 export interface businessDetailsProps{
-        businessName:string | null,
+        name:string | null,
         email:string | null,
         location:string | null,
         logo:string | undefined,
+        logoMetadata:string | undefined,
+        partyLogo:string | null,
+        partyLogoMetadata:string | null,
+        productLogo:string | null,
+        productLogoMetadata:string | null,
         mobileNumber1:string | null,
         mobileNumber2:string | null,
         website:string | null,
         selectedFrame:string | null,
-        designation : string | null,
-        logoMetadata:string | undefined,
         accountType:string | null,
         language:string | null,
+        aboutYourself:string | null,
+        partyName:string | null,
 }
 
 const initialState: businessDetailsProps= {
-    businessName:null,
+    name:null,
     email:null,
     location:null,
     logo:"",
+    logoMetadata:undefined,
+    partyLogo:null,
+    partyLogoMetadata:null,
+    productLogo:null,
+    productLogoMetadata:null,
     mobileNumber1:null,
     mobileNumber2:null,
     website:null,
     selectedFrame:'frame1',
-    designation :null,
-    logoMetadata:undefined,
     accountType:null,
     language:null,
+    aboutYourself:null,
+    partyName:null,
 
 }
 
-export const businessDetailsSlice = createSlice({
-  name: 'business',
+export const profileDetailsSlice = createSlice({
+  name: 'profile',
   initialState,
   reducers: {
-    addBusinessName:(state,action)=>{
-      state.businessName= action.payload
+    addName:(state,action)=>{
+      state.name= action.payload
     },
-    addBusinessDetails:(state,action)=>{
-        state.businessName =action.payload.businessName;
+    addProfileDetails:(state,action)=>{
+        state.name =action.payload.name;
         state.email =action.payload.email;
         state.mobileNumber1 =action.payload.mobileNumber1;
         state.mobileNumber2 =action.payload.mobileNumber2;
         state.website =action.payload.website;
         state.location =action.payload.location;
-        state.designation= action.payload.designation ? action.payload.designation :null;
         state.accountType = action.payload.accountType ?action.payload.accountType:null;
-        state.language= action.payload.language
+        state.language= action.payload.language,
+        state.aboutYourself=action.payload.aboutYourself ? action.payload.aboutYourself:null;
+        state.partyName=action.payload.partyName ? action.payload.partyName:null;
+        state.partyLogo= action.payload.partyLogo || null;
+        state.partyLogoMetadata= action.payload.partyLogoMetadata || null;
+        state.productLogo= action.payload.productLogo || null,
+        state.productLogoMetadata = action.payload.productLogoMetadata || null;
         if(action.payload.logoMetadata){
           state.logoMetadata= action.payload.logoMetadata
           state.logo= action.payload.logo
         }
     },
-    clearBusinessDetails:(state)=>{
-        state.businessName =null;
+    clearProfileDetails:(state)=>{
+        state.name=null,
         state.email =null;
         state.mobileNumber1 =null;
         state.mobileNumber2 =null;
@@ -66,12 +81,23 @@ export const businessDetailsSlice = createSlice({
         state.logo= undefined;
         state.accountType= null;
         state.language= null
+        state.aboutYourself=null;
+        state.partyName=null;
+
         // console.warn('user loggedin');
     },
     updateLogo:(state,action)=>{
       state.logo = action.payload.logo;
       state.logoMetadata = action.payload.logoMetadata;
       // console.warn('user loggedin');
+    },
+    updatePartyLogo:(state,action)=>{
+      state.partyLogo= action.payload.partyLogo || null;
+      state.partyLogoMetadata= action.payload.partyLogoMetadata || null;
+    },
+    updateProductLogo:(state,action)=>{
+        state.productLogo= action.payload.productLogo || null,
+        state.productLogoMetadata = action.payload.productLogoMetadata || null;
     },
     selectFrame:(state,action)=>{
       if(action.payload){
@@ -93,6 +119,6 @@ export const businessDetailsSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const {addBusinessDetails, clearBusinessDetails, selectFrame,updateLogo,addBusinessName} = businessDetailsSlice.actions
+export const {addProfileDetails, clearProfileDetails, selectFrame,updateLogo,addName,updatePartyLogo,updateProductLogo} = profileDetailsSlice.actions
 
-export default businessDetailsSlice.reducer
+export default profileDetailsSlice.reducer
